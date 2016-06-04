@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app="ebayApp">
+	<head>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		<title>EbayApp</title>
+	</head>
+	<body>
+		<div class="container" ng-controller="MainCtrl">
+			<div>
+				<input type="text" ng-model="name" placeholder="Name" id="name">
+				<input type="text" ng-model="id" placeholder="Id" id="id">
+				<input type="text" ng-model="owner" placeholder="Owner" id="owner">
+				<button ng-click="create()">Click me!</button>
+			</div>
+		<div>
+			<button ng-click="check()">Click me!</button>
+		</div>
+
+		<div>
+			<button ng-click="transfer()">Click me!</button>
+		</div>			
+			
+		</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+	<script src="utils/funk.js"></script>
+	<script src="utils/blockchain.js"></script>
+	<script src="controllers/controller.js"></script>
+	</body>
+</html>
