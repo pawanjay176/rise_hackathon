@@ -429,12 +429,12 @@ function cb_deployed(e, d){
   }
 }
 
-app.post('/add',function(req, res){
+app.post('/manufacture',function(req, res){
     var data = req.body;
     chaincode.query.read(['_itemindex'], cb_got_index);
     console.log("creating new item..");
-    if(data.name && data.id && data.owner && data.price && data.warranty){
-      chaincode.invoke.init_item([data.id, data.name, data.owner, data.price, data.warranty], cb_invoked);
+    if(data.name && data.id && data.company && data.price && data.warranty){
+      chaincode.invoke.init_item([data.id, data.name, data.company, data.price, data.warranty], cb_invoked);
     }
     else{
       console.log("invalid");
@@ -443,12 +443,43 @@ app.post('/add',function(req, res){
     res.json({'status':200});
 })
 
-app.post('/transfer', function(req, res){
+app.post('/first_sale',function(req, res){
+    var data = req.body;
+    chaincode.query.read(['_itemindex'], cb_got_index);
+    console.log("making first sale..");
+    if(data.id && data.owner && data.bill_num && data.seller){
+      chaincode.invoke.first_sale([data.id, data.owner, data.bill_num, data.seller], cb_invoked);
+    }
+    else{
+      console.log("invalid");
+      res.json({'status':'invalid'});  
+    }
+    res.json({'status':200});
+})
+
+
+
+app.post('/resale', function(req, res){
   var data = req.body;
   chaincode.query.read(['_itemindex'], cb_got_index);
-  console.log("transferring")
+  console.log("resale")
   if(data.id && data.newOwner && data.newPrice){
-        chaincode.invoke.set_user([data.id, data.newOwner, data.newPrice]);
+        chaincode.invoke.resale_item([data.id, data.newOwner, data.newPrice]);
+      }
+  else{
+      console.log("invalid");
+      res.json({'status':'invalid'});  
+    }
+  res.json({'status':200});
+
+})
+
+app.post('/repair', function(req, res){
+  var data = req.body;
+  chaincode.query.read(['_itemindex'], cb_got_index);
+  console.log("resale")
+  if(data.id && data.problem && data.fixes){
+        chaincode.invoke.repair_item([data.id, data.problem, data.fixes]);
       }
   else{
       console.log("invalid");
