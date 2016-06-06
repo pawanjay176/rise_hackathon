@@ -4,18 +4,18 @@
 var ibc = {};
 var chaincode = {};
 var async = require('async');
-var atob = require('atob');
+
 module.exports.setup = function(sdk, cc){
 	ibc = sdk;
 	chaincode = cc;
 };
 
 module.exports.process_msg = function(ws, data){
-	if(data.v === 1){
+	if(data.v === 2){
 		if(data.type == 'create'){
 			console.log('its a create!');
-			if(data.name && data.id && data.owner){
-				chaincode.invoke.init_item([data.name, data.id, data.owner], cb_invoked);				//create a new marble
+			if(data.name && data.color && data.size && data.user){
+				chaincode.invoke.init_marble([data.name, data.color, data.size, data.user], cb_invoked);				//create a new marble
 			}
 		}
 		else if(data.type == 'get'){
@@ -67,20 +67,14 @@ module.exports.process_msg = function(ws, data){
 			console.log('remove trade msg');
 			chaincode.invoke.remove_trade([data.id]);
 		}
-		else if(data.type == 'return_stuff'){
-			console.log('RETURNING STUFFF>>>>>');
-			ibc.chain_stats(cb_got_return);
-		}
 	}
 	
-		
+	
 	//got the marble index, lets get each marble
 	function cb_got_index(e, index){
 		if(e != null) console.log('error:', e);
 		else{
 			try{
-				console.log("SHIIIITTTTT");
-				console.log(index);
 				var json = JSON.parse(index);
 				for(var i in json){
 					console.log('!', i, json[i]);
@@ -95,17 +89,13 @@ module.exports.process_msg = function(ws, data){
 	
 	//call back for getting a marble, lets send a message
 	function cb_got_marble(e, marble){
+		console.log("Call to cb_got_marble");
 		if(e != null) console.log('error:', e);
 		else {
 			try{
-				console.log("hellos")
-				console.log(JSON.parse(marble));
-				console.log("hellosd")
 				sendMsg({msg: 'marbles', marble: JSON.parse(marble)});
 			}
-			catch(e){
-				console.log("lag gayiii");
-			}
+			catch(e){}
 		}
 	}
 	
@@ -113,42 +103,6 @@ module.exports.process_msg = function(ws, data){
 		console.log('response: ', e, a);
 	}
 	
-	function print_payload()
-	{
-		sendMsg({msg:'payload','payload':payloads});
-	}
-
-	var payloads = [];
-	function cb_got_return(e, stats){
-		var bc = stats;
-		chain_stats = stats;
-		if(stats && stats.height){
-			var list = [];
-			for(var i = stats.height - 1; i >= 1; i--){								//create a list of heights we need
-				list.push(i);
-			}
-			list.reverse();															//flip it so order is correct in UI
-			console.log(list);
-			
-			async.eachLimit(list, 1, function(key, cb) {							//iter through each one, and send it
-				ibc.block_stats(key, function(e, stats){
-					if(e == null){
-						stats.height = key;
-						console.log("block number",key);
-						console.log("payload");
-						// console.log(atob(stats.transactions[0].payload));
-						payloads.push(stats.transactions[0].payload);
-						// sendMsg({msg: 'chainstats', e: e, chainstats: chain_stats, blockstats: stats});
-					}
-					cb(null);
-				});
-				// callback(payloads);
-			}, function () {
-				print_payload();
-			});
-		}
-
-	}
 	//call back for getting the blockchain stats, lets get the block height now
 	var chain_stats = {};
 	function cb_chainstats(e, stats){
@@ -160,7 +114,7 @@ module.exports.process_msg = function(ws, data){
 				if(list.length >= 8) break;
 			}
 			list.reverse();															//flip it so order is correct in UI
-			// console.log(list);
+			console.log(list);
 			async.eachLimit(list, 1, function(key, cb) {							//iter through each one, and send it
 				ibc.block_stats(key, function(e, stats){
 					if(e == null){
