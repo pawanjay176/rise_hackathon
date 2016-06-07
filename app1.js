@@ -433,8 +433,8 @@ app.post('/manufacture',function(req, res){
     var data = req.body;
     chaincode.query.read(['_itemindex'], cb_got_index);
     console.log("creating new item..");
-    if(data.name && data.id && data.company && data.price && data.warranty){
-      chaincode.invoke.init_item([data.id, data.name, data.company, data.price, data.warranty], cb_invoked);
+    if(data.name && data.id && data.company && data.price && data.warranty && data.category){
+      chaincode.invoke.init_item([data.id, data.name, data.company, data.price, data.warranty, data.category], cb_invoked);
     }
     else{
       console.log("invalid");
@@ -491,6 +491,7 @@ app.post('/repair', function(req, res){
 
 app.post('/getItem',function(req, res){
   var id = req.body.id;
+  console.log(req.body);
   chaincode.query.read([id], function(e, item){
     if(e != null) console.log('error:', e);
     else{
